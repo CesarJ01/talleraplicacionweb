@@ -12,6 +12,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config'; // Importar ConfigModule y ConfigService
 import { DatabaseModule } from './database/database.module';
 
+/* el problema del reposityory era que lo hacia en app.module.ts y no en database */
+
 @Module({
   imports: [
      

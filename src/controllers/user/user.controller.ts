@@ -3,11 +3,12 @@
 
 import { Controller, ParseIntPipe, Delete, Get, Param, NotFoundException, Body, Post, Put, Res } from '@nestjs/common';
 import { IUserResponse } from './dto/IUserResponse';
-import { IGetUserResponse } from './dto/IGetUserResponse';
 import { IPostUserRequest } from './dto/IPostUserRequest';
 import { IPostUserResponse } from './dto/IPostUserResponse';
 import { IPutUserRequest } from './dto/IPutUserRequest';
+import { UsuarioService } from 'src/providers/usuario/usuario.service';
 import { Response } from 'express';
+import { User } from 'src/database/entities/user.entity.ts';
 
 @Controller('user')
 export class UserController {
@@ -28,6 +29,8 @@ export class UserController {
     },
   ];
 
+  constructor(private usuarioService: UsuarioService) {}
+
   @Get()
   public getUsers(): IUserResponse[] {
     return this.users;
@@ -46,6 +49,7 @@ export class UserController {
 
   @Post()
   async postUser(@Body() request: IPostUserRequest): Promise<IPostUserResponse> {
+    console.log('@POST');
     const response: IPostUserResponse = {
       data: null,
       statusCode: 200,
@@ -54,15 +58,14 @@ export class UserController {
     };
 
     if (request) {
-      const newUser: IGetUserResponse = {
+      const newUser: User = { /* error User, o UserEntity*/
         name: request.name,
         lastname: request.lastname,
         birthdate: request.birthdate,
         age: request.age,
-        id: this.users.length,
-      };
+      } as User;
 
-      this.users.push(newUser);
+      await this.usuarioService.create(newUser);
       return response;
     }
   }
