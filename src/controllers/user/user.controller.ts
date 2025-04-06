@@ -1,14 +1,16 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable prettier/prettier */
 
-import { Controller, ParseIntPipe, Delete, Get, Param, NotFoundException, Body, Post, Put, Res } from '@nestjs/common';
+import { Controller , Delete, Get, Param, NotFoundException, Body, Post, Put, Res } from '@nestjs/common';
 import { IUserResponse } from './dto/IUserResponse';
-import { IPostUserRequest } from './dto/IPostUserRequest';
+/* import { IPostUserRequest } from './dto/IPostUserRequest'; */
 import { IPostUserResponse } from './dto/IPostUserResponse';
-import { IPutUserRequest } from './dto/IPutUserRequest';
+/* import { IPutUserRequest } from './dto/IPutUserRequest'; */
 import { UsuarioService } from 'src/providers/usuario/usuario.service';
 import { Response } from 'express';
 import { User } from 'src/database/entities/user.entity.ts';
+import { UserDTO } from './dto/user.dto';
+import { UpdateResult } from 'typeorm';
 
 @Controller('user')
 export class UserController {
@@ -28,6 +30,7 @@ export class UserController {
       id: 1,
     },
   ];
+  userService: any;
 
   constructor(private usuarioService: UsuarioService) {}
 
@@ -48,7 +51,7 @@ export class UserController {
   }
 
   @Post()
-  async postUser(@Body() request: IPostUserRequest): Promise<IPostUserResponse> {
+  async postUser(@Body() request: UserDTO): Promise<IPostUserResponse> {
     console.log('@POST');
     const response: IPostUserResponse = {
       data: null,
@@ -70,6 +73,15 @@ export class UserController {
     }
   }
 
+  @Put(':id')
+  async putUser(
+    @Param('id') id: number,
+    @Body() request: UserDTO
+  ): Promise<UpdateResult> {
+    return await this.usuarioService.update(id, request);
+  }
+
+  /* 
     @Put(':id')
     async putUser(
     @Param('id', ParseIntPipe) id: number,  // Aquí aplicamos el ParseIntPipe
@@ -100,7 +112,7 @@ export class UserController {
         message: 'User updated successfully',
         user,
     });
-    }
+    } */
 
     @Delete(':id')
     async deleteUser(@Param('id') id: number, @Res() response: Response): Promise<Response> {
